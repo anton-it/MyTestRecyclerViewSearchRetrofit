@@ -1,6 +1,6 @@
 package com.ak87.mytestrecyclerviewsearchretrofit.domain
 
-data class User(
+data class UserModel(
     val id: Int,
     val username: String,
     val email: String,
