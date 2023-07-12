@@ -1,16 +1,24 @@
 package com.ak87.mytestrecyclerviewsearchretrofit.presentations.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import com.ak87.mytestrecyclerviewsearchretrofit.R
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.FragmentMainBinding
+import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
+import com.ak87.mytestrecyclerviewsearchretrofit.presentations.adapters.UserModelAdapter
+import okhttp3.internal.userAgent
 
 
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
+    private lateinit var adapter: UserModelAdapter
 
 
     override fun onCreateView(
@@ -19,6 +27,42 @@ class MainFragment : Fragment() {
     ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() = with(binding) {
+        rcView.layoutManager = LinearLayoutManager(activity)
+        adapter = UserModelAdapter()
+        rcView.adapter = adapter
+        val usersList = addDataToUsersList()
+        Log.d("MyLog111", usersList.toString())
+        adapter.submitList(usersList)
+    }
+
+    private fun addDataToUsersList(): List<UserModel>{
+
+        val list = listOf<UserModel>(
+            UserModel(1, "Dan", "", "", "",
+                "", R.drawable.java, ""),
+            UserModel(2, "Ban", "", "", "",
+                "", R.drawable.cplusplus, ""),
+            UserModel(3, "Jon", "", "", "",
+                "", R.drawable.csharp, ""),
+            UserModel(4, "Sam", "", "", "",
+                "", R.drawable.javascript, ""),
+            UserModel(5, "Martin", "", "", "",
+                "", R.drawable.kotlin, ""),
+            UserModel(6, "Barn", "", "", "",
+                "", R.drawable.python, ""),
+            UserModel(7, "Swen", "", "", "",
+                "", R.drawable.swift, ""),
+        )
+        return list
+
     }
 
     companion object {
