@@ -10,7 +10,6 @@ import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
 class UserModelAdapter : ListAdapter<UserModel, UserModelAdapter.ViewHolder>(UserModelDiffCallback) {
 
     class ViewHolder(val binding: UserItemBinding) : RecyclerView.ViewHolder(binding.root) {
-
 //        fun bind(item: UserModel) = with(binding) {
 //
 //        }
@@ -29,6 +28,5 @@ class UserModelAdapter : ListAdapter<UserModel, UserModelAdapter.ViewHolder>(Use
             tvUserName.text = item.username
             ivLogo.setImageResource(item.image.toInt())
         }
-
     }
 }
