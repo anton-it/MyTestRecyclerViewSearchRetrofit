@@ -9,10 +9,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.ak87.mytestrecyclerviewsearchretrofit.R
+import com.ak87.mytestrecyclerviewsearchretrofit.data.network.UserModelApi
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.FragmentMainBinding
 import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
 import com.ak87.mytestrecyclerviewsearchretrofit.presentations.adapters.UserModelAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.internal.userAgent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainFragment : Fragment() {
@@ -32,6 +38,17 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://dummyjson.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val userModelApi = retrofit.create(UserModelApi::class.java)
+        CoroutineScope(Dispatchers.IO).launch {
+           val usersListRetrofit =  userModelApi.getUsersList()
+            Log.d("MyLog111", usersListRetrofit.toString())
+        }
     }
 
     private fun initRecyclerView() = with(binding) {
