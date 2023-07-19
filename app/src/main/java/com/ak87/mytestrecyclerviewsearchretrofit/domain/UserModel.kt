@@ -7,6 +7,6 @@ data class UserModel(
     val firstName: String,
     val lastName: String,
     val gender: String,
-    val image: Int,
+    val image: String,
     val token: String
 )
