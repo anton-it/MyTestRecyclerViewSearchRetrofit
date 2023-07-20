@@ -46,21 +46,12 @@ class MainFragment : Fragment() {
         initRecyclerView()
         getUsersListData()
         updateUsersList()
-        //initRetrofit()
-        //updateUsersList()
-//
-//        viewModel.liveDataUsersList.observe(viewLifecycleOwner) {
-//            adapter.submitList(usersListRetrofit?.usersList)
-//        }
     }
 
     private fun initRecyclerView() = with(binding) {
         rcView.layoutManager = LinearLayoutManager(activity)
         adapter = UserModelAdapter()
         rcView.adapter = adapter
-        //val usersList = addDataToUsersList()
-        //Log.d("MyLog111", usersList.toString())
-        //adapter.submitList(usersList)
     }
 
 //    private fun initRetrofit() {
@@ -102,56 +93,20 @@ class MainFragment : Fragment() {
 
         val userApi = retrofit.create(UserApi::class.java)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val list = userApi.getUsersList()
             usersList = list.users
             Log.d("MyLog111", "usersListTemp11 = $usersList")
-            viewModel.liveDataUsersList.value = usersList
+            viewModel.liveDataUsersList.postValue(usersList)
         }
 
     }
 
-    private fun updateUsersList() = with(binding){
-        viewModel.liveDataUsersList.observe(viewLifecycleOwner){
+    private fun updateUsersList() = with(binding) {
+        viewModel.liveDataUsersList.observe(viewLifecycleOwner) {
             adapter.submitList(usersList)
         }
     }
-
-//    private fun addDataToUsersList(): List<UserModel> {
-//
-//        val list = listOf<UserModel>(
-//            UserModel(
-//                1, "Dan", "", "", "",
-//                "", R.drawable.java, ""
-//            ),
-//            UserModel(
-//                2, "Ban", "", "", "",
-//                "", R.drawable.cplusplus, ""
-//            ),
-//            UserModel(
-//                3, "Jon", "", "", "",
-//                "", R.drawable.csharp, ""
-//            ),
-//            UserModel(
-//                4, "Sam", "", "", "",
-//                "", R.drawable.javascript, ""
-//            ),
-//            UserModel(
-//                5, "Martin", "", "", "",
-//                "", R.drawable.kotlin, ""
-//            ),
-//            UserModel(
-//                6, "Barn", "", "", "",
-//                "", R.drawable.python, ""
-//            ),
-//            UserModel(
-//                7, "Swen", "", "", "",
-//                "", R.drawable.swift, ""
-//            ),
-//        )
-//        return list
-//
-//    }
 
     companion object {
         fun newInstance() = MainFragment()
