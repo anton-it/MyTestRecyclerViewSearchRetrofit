@@ -10,10 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ak87.mytestrecyclerviewsearchretrofit.data.network.UserApi
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.FragmentMainBinding
+import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
 import com.ak87.mytestrecyclerviewsearchretrofit.presentations.MainViewModel
 import com.ak87.mytestrecyclerviewsearchretrofit.presentations.adapters.UserModelAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,6 +28,7 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var adapter: UserModelAdapter
     private lateinit var viewModel: MainViewModel
+    private var usersList: List<UserModel>? = null
     //private var usersListRetrofit: UsersListModel? = null
 
 
@@ -41,12 +44,14 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         initRecyclerView()
-        //initRetrofit()
+        getUsersListData()
         updateUsersList()
-
-        viewModel.liveDataUsersList.observe(viewLifecycleOwner) {
-            //adapter.submitList(usersListRetrofit?.usersList)
-        }
+        //initRetrofit()
+        //updateUsersList()
+//
+//        viewModel.liveDataUsersList.observe(viewLifecycleOwner) {
+//            adapter.submitList(usersListRetrofit?.usersList)
+//        }
     }
 
     private fun initRecyclerView() = with(binding) {
@@ -81,7 +86,7 @@ class MainFragment : Fragment() {
 //        }
 //    }
 
-    private fun updateUsersList() {
+    private fun getUsersListData() {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -97,13 +102,18 @@ class MainFragment : Fragment() {
 
         val userApi = retrofit.create(UserApi::class.java)
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val list = userApi.getUsersList()
-            Log.d("MyLog111", "usersListTemp11 = ${list.users}")
+            usersList = list.users
+            Log.d("MyLog111", "usersListTemp11 = $usersList")
+            viewModel.liveDataUsersList.value = usersList
+        }
 
-//            binding.apply {
-//                adapter.submitList(list.users)
-//            }
+    }
+
+    private fun updateUsersList() = with(binding){
+        viewModel.liveDataUsersList.observe(viewLifecycleOwner){
+            adapter.submitList(usersList)
         }
     }
 

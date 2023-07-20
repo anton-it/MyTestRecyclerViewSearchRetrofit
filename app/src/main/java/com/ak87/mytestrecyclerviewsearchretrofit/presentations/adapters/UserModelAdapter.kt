@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.UserItemBinding
 import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
+import com.squareup.picasso.Picasso
 
 class UserModelAdapter : ListAdapter<UserModel, UserModelAdapter.ViewHolder>(UserModelDiffCallback) {
 
@@ -26,7 +27,8 @@ class UserModelAdapter : ListAdapter<UserModel, UserModelAdapter.ViewHolder>(Use
 
         with(holder.binding) {
             tvUserName.text = item.username
-            ivLogo.setImageResource(item.image.toInt())
+            Picasso.get().load(item.image).into(ivLogo)
+           // ivLogo.setImageResource(item.image.toInt())
         }
     }
 }
