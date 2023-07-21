@@ -8,19 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ak87.mytestrecyclerviewsearchretrofit.data.network.UserApi
+import com.ak87.mytestrecyclerviewsearchretrofit.data.network.ApiFactory
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.FragmentMainBinding
 import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
 import com.ak87.mytestrecyclerviewsearchretrofit.presentations.MainViewModel
 import com.ak87.mytestrecyclerviewsearchretrofit.presentations.adapters.UserModelAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainFragment : Fragment() {
@@ -29,8 +24,7 @@ class MainFragment : Fragment() {
     private lateinit var adapter: UserModelAdapter
     private lateinit var viewModel: MainViewModel
     private var usersList: List<UserModel>? = null
-    //private var usersListRetrofit: UsersListModel? = null
-
+    private val userApi = ApiFactory.userApi
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,52 +48,14 @@ class MainFragment : Fragment() {
         rcView.adapter = adapter
     }
 
-//    private fun initRetrofit() {
-//        val interceptor = HttpLoggingInterceptor()
-//        interceptor.level = HttpLoggingInterceptor.Level.BODY
-//
-//        val client = OkHttpClient.Builder()
-//            .addInterceptor(interceptor)
-//            .build()
-//
-//        val retrofit = Retrofit.Builder()
-//            .client(client)
-//            .baseUrl("https://dummyjson.com")
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//
-//        val userModelApi = retrofit.create(UserModelApi::class.java)
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val usersListRetrofit =  userModelApi.getUsersList()
-//
-//            Log.d("MyLog111", usersListRetrofit.usersList.toString())
-//            adapter.submitList(usersListRetrofit.usersList)
-//        }
-//    }
 
     private fun getUsersListData() {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-
-        val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl("https://dummyjson.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val userApi = retrofit.create(UserApi::class.java)
-
         CoroutineScope(Dispatchers.IO).launch {
             val list = userApi.getUsersList()
             usersList = list.users
             Log.d("MyLog111", "usersListTemp11 = $usersList")
             viewModel.liveDataUsersList.postValue(usersList)
         }
-
     }
 
     private fun updateUsersList() = with(binding) {
