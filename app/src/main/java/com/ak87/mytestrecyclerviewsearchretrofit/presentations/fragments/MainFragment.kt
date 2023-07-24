@@ -6,8 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ak87.mytestrecyclerviewsearchretrofit.R
 import com.ak87.mytestrecyclerviewsearchretrofit.data.network.ApiFactory
 import com.ak87.mytestrecyclerviewsearchretrofit.databinding.FragmentMainBinding
 import com.ak87.mytestrecyclerviewsearchretrofit.domain.UserModel
@@ -16,6 +19,8 @@ import com.ak87.mytestrecyclerviewsearchretrofit.presentations.adapters.UserMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainFragment : Fragment() {
@@ -40,6 +45,7 @@ class MainFragment : Fragment() {
         initRecyclerView()
         getUsersListData()
         updateUsersList()
+        setupSearchListener()
     }
 
     private fun initRecyclerView() = with(binding) {
@@ -61,6 +67,38 @@ class MainFragment : Fragment() {
     private fun updateUsersList() = with(binding) {
         viewModel.liveDataUsersList.observe(viewLifecycleOwner) {
             adapter.submitList(usersList)
+        }
+    }
+
+    private fun setupSearchListener() = with(binding) {
+        searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+
+        })
+
+    }
+
+    private fun filterList(query : String?) {
+        if (query != null) {
+            val filteredUsersList = ArrayList<UserModel>()
+            for (i in usersList!!) {
+                if (i.username.lowercase(Locale.ROOT).contains(query)) {
+                    filteredUsersList.add(i)
+                }
+            }
+
+            if (filteredUsersList.isEmpty()) {
+                Toast.makeText(activity, getString(R.string.no_data_found), Toast.LENGTH_SHORT).show()
+            } else {
+                adapter.submitList(filteredUsersList)
+            }
         }
     }
 
