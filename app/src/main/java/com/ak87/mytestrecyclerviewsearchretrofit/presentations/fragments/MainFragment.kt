@@ -77,7 +77,9 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filterList(newText)
+                if (newText != null) {
+                    filterList(newText)
+                }
                 return true
             }
 
@@ -85,20 +87,11 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun filterList(query : String?) {
-        if (query != null) {
-            val filteredUsersList = ArrayList<UserModel>()
-            for (i in usersList!!) {
-                if (i.username.lowercase(Locale.ROOT).contains(query)) {
-                    filteredUsersList.add(i)
-                }
-            }
-
-            if (filteredUsersList.isEmpty()) {
-                Toast.makeText(activity, getString(R.string.no_data_found), Toast.LENGTH_SHORT).show()
-            } else {
-                adapter.submitList(filteredUsersList)
-            }
+    private fun filterList(username: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = userApi.getUsersByName(username)
+            usersList = list.users
+            viewModel.liveDataUsersList.postValue(usersList)
         }
     }
 

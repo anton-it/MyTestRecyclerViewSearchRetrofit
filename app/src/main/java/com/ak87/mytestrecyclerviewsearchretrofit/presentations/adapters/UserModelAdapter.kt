@@ -26,7 +26,7 @@ class UserModelAdapter : ListAdapter<UserModel, UserModelAdapter.ViewHolder>(Use
         val item = getItem(position)
 
         with(holder.binding) {
-            tvUserName.text = item.username
+            tvUserName.text = item.firstName
             Picasso.get().load(item.image).into(ivLogo)
            // ivLogo.setImageResource(item.image.toInt())
         }
